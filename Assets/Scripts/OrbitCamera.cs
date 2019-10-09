@@ -5,7 +5,6 @@ public class OrbitCamera : MonoBehaviour
     [SerializeField] private Transform target;
     [SerializeField] private float rotSpeed = 1.5f;
 
-    private Vector3 movement;
     private float rotY;
     private float rotX;
     private float minimumVert = -20.0f;
@@ -18,6 +17,7 @@ public class OrbitCamera : MonoBehaviour
     void Start()
     {
         rotY = transform.eulerAngles.y;
+        rotX = transform.eulerAngles.x;
         offset = target.position - transform.position;
     }
 
