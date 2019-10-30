@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class OrbitCamera : MonoBehaviour
+public class Camera : MonoBehaviour
 {
     [SerializeField] private Transform target;
     [SerializeField] private float rotSpeed = 1.5f;
@@ -11,6 +11,7 @@ public class OrbitCamera : MonoBehaviour
     private float maximumVert = 30.0f;
 
     private Vector3 offset;
+    private Quaternion rotations;
     private float horInput;
     private float vertInput;
 
@@ -39,8 +40,9 @@ public class OrbitCamera : MonoBehaviour
             rotX = Mathf.Clamp(rotX, minimumVert, maximumVert);
         }
 
-        Quaternion rotation = Quaternion.Euler(rotX, rotY, 0);
-        transform.position = target.position - (rotation * offset);
+        rotations = Quaternion.Euler(rotX, rotY, 0);
+        transform.position = target.position - (rotations * offset);
+
         transform.LookAt(target);
     }
 }
