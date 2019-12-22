@@ -10,16 +10,7 @@ public class DoorOpenDevice : MonoBehaviour
 
     public void Operate()
     {
-        //pos = open ? transform.position - dPos : pos = transform.position + dPos;
-
-        if (open) 
-        {
-            pos = transform.position - dPos;
-        }
-        else
-        {
-            pos = transform.position + dPos;
-        }
+        pos = open ? transform.position - dPos : pos = transform.position + dPos;
 
         transform.position = pos;
         open = !open;

@@ -12,8 +12,10 @@ public class RelativeMovement : MonoBehaviour
     private float minFall = -1.5f;
     private float vertSpeed;
     private bool hitGround = false;
+    private float pushForce = 3.0f;
 
     private CharacterController charController;
+    private Rigidbody rb;
     private ControllerColliderHit contact;
     private Animator animator;
 
@@ -27,6 +29,7 @@ public class RelativeMovement : MonoBehaviour
     {
         charController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
 
         vertSpeed = minFall;
     }
@@ -56,7 +59,7 @@ public class RelativeMovement : MonoBehaviour
 
         animator.SetFloat("Speed", movement.sqrMagnitude);
 
-        hitGround = false;
+        hitGround = false; // raycast down to address steep slopes and dropoff edge
         RaycastHit hit;
 
         if (vertSpeed < 0 && Physics.Raycast(transform.position, Vector3.down, out hit))
@@ -65,8 +68,8 @@ public class RelativeMovement : MonoBehaviour
             hitGround = hit.distance <= check;  // to be sure check slightly beyond bottom of capsule
         }
 
-        if (charController.isGrounded)
-        {
+        if (charController.isGrounded) // y movement: possibly jump impulse up, always accel down                                     
+        {               // could _charController.isGrounded instead, but then cannot workaround dropoff edge
             if (Input.GetButtonDown("Jump"))
             {
                 vertSpeed = jumpSpeed;
@@ -91,7 +94,7 @@ public class RelativeMovement : MonoBehaviour
                 animator.SetBool("Jumping", true);
             }
 
-            if (charController.isGrounded)
+            if (charController.isGrounded)  // workaround for standing on dropoff edge
             {
                 if (Vector3.Dot(movement, contact.normal) < 0)
                 {
@@ -113,5 +116,11 @@ public class RelativeMovement : MonoBehaviour
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         contact = hit;
+
+         rb = hit.collider.attachedRigidbody;
+        if (rb != null && !rb.isKinematic)
+        {
+            rb.velocity = hit.moveDirection * pushForce;
+        }
     }
 }
